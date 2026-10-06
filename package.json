@@ -1,6 +1,9 @@
 {
   "name": "dream-catcher",
   "version": "1.0.0",
+  "engines": {
+  "node": "22.x"
+},
   "description": "Dream Catcher - A dream journal with AI interpretations",
   "main": "server.js",
   "type": "module",
