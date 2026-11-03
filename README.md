@@ -1,6 +1,6 @@
 # Dream Journal App
 
-A full-stack web application that allows users to record their dreams and receive AI-powered interpretations using Claude.
+A full-stack web application that allows users to record their dreams and receive AI-powered interpretations using Gemini.
 
 ## Features
 
@@ -8,14 +8,14 @@ A full-stack web application that allows users to record their dreams and receiv
 - Get AI interpretations of your dreams
 - View all past dreams and their interpretations
 - Delete dreams
-- SQLite database for persistent storage
+- PostgreSQL database for persistent storage
 - Vanilla JavaScript frontend
 - Express backend with RESTful API
 
 ## Tech Stack
 
 - **Backend**: Node.js, Express
-- **Database**: SQLite (better-sqlite3)
+- **Database**: PostgreSQL
 - **Frontend**: HTML, CSS, Vanilla JavaScript
 - **AI**: Anthropic Claude API
 
@@ -27,7 +27,6 @@ dream-journal/
 ├── package.json        # Dependencies and scripts
 ├── .env               # Environment variables (create this)
 ├── .env.example       # Example env file
-├── dreams.db          # SQLite database (auto-created)
 └── public/
     ├── index.html     # Frontend HTML
     ├── styles.css     # Styles
@@ -44,20 +43,17 @@ npm install
 
 ### 2. Set Up Environment Variables
 
-Create a `.env` file in the root directory:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and add your Anthropic API key:
+Create a `.env` file in the project root and configure your PostgreSQL connection and Gemini API key:
 
 ```
-ANTHROPIC_API_KEY=your_api_key_here
-PORT=3000
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-3.6-flash
+PORT=3001
 ```
 
-Get your API key from: https://console.anthropic.com/
+Use your database provider's connection string. Keep `.env` private and never commit credentials.
+Get a Gemini API key from https://aistudio.google.com/apikey.
 
 ### 3. Run the Application
 
@@ -71,7 +67,7 @@ Production mode:
 npm start
 ```
 
-The app will be available at `http://localhost:3000`
+The app will be available at `http://localhost:3001` by default.
 
 ## API Endpoints
 
@@ -100,18 +96,17 @@ Make sure your code is in a Git repository (GitHub, GitLab, etc.)
 ### 3. Add Environment Variables
 
 In the Render dashboard, add:
-- `ANTHROPIC_API_KEY`: Your Anthropic API key
+- `DATABASE_URL`: Your PostgreSQL connection string
+- `GEMINI_API_KEY`: Your Gemini API key
+- `GEMINI_MODEL` (optional): Gemini model name
 
 ### 4. Deploy
 
 Click "Create Web Service" and Render will deploy your app automatically.
 
-### 5. Database Persistence
+### 5. Database
 
-Note: The SQLite database file will be stored in Render's ephemeral filesystem. For production, consider:
-- Using Render's persistent disk feature
-- Migrating to PostgreSQL for better persistence
-- Backing up data regularly
+Configure `DATABASE_URL` with your PostgreSQL connection string in the Render dashboard. For Render PostgreSQL, use the internal URL when the web service and database are in the same region.
 
 ## Usage
 
