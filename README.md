@@ -17,16 +17,16 @@ A full-stack web application that allows users to record their dreams and receiv
 - **Backend**: Node.js, Express
 - **Database**: PostgreSQL
 - **Frontend**: HTML, CSS, Vanilla JavaScript
-- **AI**: Anthropic Claude API
+- **AI**: Google Gemini API
 
 ## Project Structure
 
 ```
-dream-journal/
+dream-catcher/
 ├── server.js           # Express server and API routes
 ├── package.json        # Dependencies and scripts
-├── .env               # Environment variables (create this)
-├── .env.example       # Example env file
+├── .env.example        # Environment variable template
+├── render.yaml         # Render deployment blueprint
 └── public/
     ├── index.html     # Frontend HTML
     ├── styles.css     # Styles
@@ -43,14 +43,14 @@ npm install
 
 ### 2. Set Up Environment Variables
 
-Create a `.env` file in the project root and configure your PostgreSQL connection and Gemini API key:
+Copy `.env.example` to `.env` and add your PostgreSQL connection and Gemini API key:
 
-```
-DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-3.6-flash
-PORT=3001
-```
+The template contains placeholders for:
+
+- `DATABASE_URL`: your PostgreSQL connection string
+- `GEMINI_API_KEY`: your Gemini API key
+- `GEMINI_MODEL`: a model enabled for your Gemini API key
+- `PORT`: optional; defaults to `3001`
 
 Use your database provider's connection string. Keep `.env` private and never commit credentials.
 Get a Gemini API key from https://aistudio.google.com/apikey.
@@ -67,7 +67,8 @@ Production mode:
 npm start
 ```
 
-The app will be available at `http://localhost:3001` by default.
+The app will be available at `http://localhost:3001` by default. `GET /health` checks that the database is reachable.
+Run the automated checks with `npm test`.
 
 ## API Endpoints
 
@@ -84,25 +85,13 @@ Make sure your code is in a Git repository (GitHub, GitLab, etc.)
 
 ### 2. Create a New Web Service on Render
 
-1. Go to https://render.com and sign in
-2. Click "New +" and select "Web Service"
-3. Connect your repository
-4. Configure the service:
-   - **Name**: dream-journal (or your choice)
-   - **Environment**: Node
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-
-### 3. Add Environment Variables
-
-In the Render dashboard, add:
-- `DATABASE_URL`: Your PostgreSQL connection string
-- `GEMINI_API_KEY`: Your Gemini API key
-- `GEMINI_MODEL` (optional): Gemini model name
+1. Push the repository to GitHub.
+2. In Render, choose **New > Blueprint** and connect this repository's `main` branch.
+3. Render reads `render.yaml` to configure the web service. Set `DATABASE_URL`, `GEMINI_API_KEY`, and `GEMINI_MODEL` when prompted.
 
 ### 4. Deploy
 
-Click "Create Web Service" and Render will deploy your app automatically.
+Keep secrets in Render's environment settings, not in GitHub. Render will deploy new commits from the connected branch automatically.
 
 ### 5. Database
 

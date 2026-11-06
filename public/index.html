@@ -25,15 +25,18 @@
         <section class="add-dream">
             <h2>Add a New Dream</h2>
             <form id="dreamForm">
+                <label class="visually-hidden" for="dreamText">Describe your dream</label>
                 <textarea
                     id="dreamText"
                     placeholder="Describe your dream in detail..."
                     rows="6"
+                    maxlength="5000"
                     required
                 ></textarea>
+                <p class="character-count" id="characterCount" aria-live="polite">0 / 5000</p>
                 <button type="submit" id="submitBtn">
                     <span class="btn-text">Get Interpretation</span>
-                    <span class="btn-loading" style="display: none;">Interpreting...</span>
+                    <span class="btn-loading">Interpreting...</span>
                 </button>
             </form>
         </section>

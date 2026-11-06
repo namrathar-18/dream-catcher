@@ -2,6 +2,11 @@ import pool from './database.js';
 
 // Create dreams table if it doesn't exist
 export async function initDatabase() {
+  if (!process.env.DATABASE_URL) {
+    console.warn('Skipping database initialization because DATABASE_URL is not configured.');
+    return;
+  }
+
   const client = await pool.connect();
 
   try {

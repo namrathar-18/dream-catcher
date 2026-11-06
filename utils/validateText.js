@@ -15,7 +15,7 @@ export function validateText(text) {
 
   // Length limit check
   if (trimmed.length > 5000) {
-    return { valid: false, error: 'Dream text must be less than 5000 characters' };
+    return { valid: false, error: 'Dream text must be no more than 5000 characters' };
   }
 
   return { valid: true, value: trimmed };

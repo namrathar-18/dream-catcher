@@ -1,20 +1,35 @@
-import express from 'express'
-import 'dotenv/config'
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { validateText } from './utils/validateText.js';
 
-console.log('The Node Environment is set to: ', process.env.NODE_ENV)
+test('validateText trims and returns dream text', () => {
+  assert.deepEqual(validateText('  A dream  '), { valid: true, value: 'A dream' });
+});
 
-if (process.env.NODE_ENV === 'production') {
-    console.log('Production mode enabled 😎')
-}
+test('validateText rejects non-string values', () => {
+  assert.deepEqual(validateText(undefined), {
+    valid: false,
+    error: 'Dream text must be a string'
+  });
+});
 
-if (process.env.NODE_ENV !== 'production') {
-    console.log('We are not in production mode 👨‍💻')
-}
+test('validateText rejects empty or whitespace-only values', () => {
+  assert.deepEqual(validateText('  \n '), {
+    valid: false,
+    error: 'Dream text is required'
+  });
+});
 
-const app = express() 
+test('validateText accepts the 5000-character maximum', () => {
+  assert.deepEqual(validateText('x'.repeat(5000)), {
+    valid: true,
+    value: 'x'.repeat(5000)
+  });
+});
 
-app.get('/', (req, res) => {
-    res.send(`<!doctype html><html><body>Hello Express!</body></html>`)
-})
-
-app.listen(8001, ()=>console.log('listening 8000'))
+test('validateText rejects values longer than 5000 characters', () => {
+  assert.deepEqual(validateText('x'.repeat(5001)), {
+    valid: false,
+    error: 'Dream text must be no more than 5000 characters'
+  });
+});

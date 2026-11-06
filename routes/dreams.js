@@ -1,16 +1,19 @@
 import express from 'express';
 import pool from '../config/database.js';
-import { getDreamInterpretation } from '../utils/ai-gemini.js'; // or '../utils/ai-gemini.js' for Gemini
-import { validateText } from '../utils/validateText.js'
+import { getDreamInterpretation } from '../utils/ai-gemini.js';
+import { validateText } from '../utils/validateText.js';
 
 const router = express.Router();
 
+function getDreamId(value) {
+  const id = Number(value);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
+}
+
 // Get all dreams
 router.get('/', async (req, res) => {
-  console.log('GET /api/dreams received');
   try {
     const result = await pool.query('SELECT * FROM dreams ORDER BY created_at DESC');
-    console.log('Fetched', result.rows.length, 'dreams');
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching dreams:', error);
@@ -20,8 +23,13 @@ router.get('/', async (req, res) => {
 
 // Get single dream
 router.get('/:id', async (req, res) => {
+  const id = getDreamId(req.params.id);
+  if (id === null) {
+    return res.status(400).json({ error: 'Dream ID must be a positive integer' });
+  }
+
   try {
-    const result = await pool.query('SELECT * FROM dreams WHERE id = $1', [req.params.id]);
+    const result = await pool.query('SELECT * FROM dreams WHERE id = $1', [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Dream not found' });
     }
@@ -34,9 +42,7 @@ router.get('/:id', async (req, res) => {
 
 // Create new dream with AI interpretation
 router.post('/', async (req, res) => {
-  console.log('POST /api/dreams received');
-
-  const { dream_text } = req.body;
+  const { dream_text } = req.body || {};
 
   // Validate input
   const validation = validateText(dream_text);
@@ -75,8 +81,13 @@ router.post('/', async (req, res) => {
 
 // Delete dream
 router.delete('/:id', async (req, res) => {
+  const id = getDreamId(req.params.id);
+  if (id === null) {
+    return res.status(400).json({ error: 'Dream ID must be a positive integer' });
+  }
+
   try {
-    const result = await pool.query('DELETE FROM dreams WHERE id = $1', [req.params.id]);
+    const result = await pool.query('DELETE FROM dreams WHERE id = $1', [id]);
     
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Dream not found' });

@@ -5,6 +5,11 @@ const submitBtn = document.getElementById('submitBtn');
 const btnText = submitBtn.querySelector('.btn-text');
 const btnLoading = submitBtn.querySelector('.btn-loading');
 const dreamsContainer = document.getElementById('dreamsContainer');
+const characterCount = document.getElementById('characterCount');
+
+dreamText.addEventListener('input', () => {
+    characterCount.textContent = `${dreamText.value.length} / 5000`;
+});
 
 // Load dreams on page load
 document.addEventListener('DOMContentLoaded', loadDreams); 
@@ -32,7 +37,7 @@ dreamForm.addEventListener('submit', async (e) => {
             },
             body: JSON.stringify({ dream_text: dream }),
         });
-const data = await response.json();
+        const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
             showErrorMessage(data.error || 'Failed to process your dream. Please try again.');
@@ -41,6 +46,7 @@ const data = await response.json();
         
         // Clear form
         dreamText.value = '';
+        characterCount.textContent = '0 / 5000';
         
         // Reload dreams
         await loadDreams();
@@ -67,7 +73,6 @@ async function loadDreams() {
 
         const dreams = await response.json();
         displayDreams(dreams);
-        console.log('dreams loaded');
     } catch (error) {
         console.error('Error:', error);
         dreamsContainer.innerHTML = '<p class="error">Failed to load dreams. Please refresh the page.</p>';
@@ -129,13 +134,14 @@ async function deleteDream(id) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete dream');
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || 'Failed to delete dream');
         }
         
         await loadDreams();
-        console.log('dream deleted');
     } catch (error) {
         console.error('Error:', error);
+        showErrorMessage(error.message || 'Failed to delete dream. Please try again.');
     }
 }
  
